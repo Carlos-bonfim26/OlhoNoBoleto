@@ -2,7 +2,7 @@ import React from "react";
 import logotipo from "./img/OlhoNoBoletoPrataLogotipo.png";
 import { IoIosWarning } from "react-icons/io";
 import { PiSiren } from "react-icons/pi";
-
+import "./Main.css";
 const InfoBoletoPage = () => {
   return (
     <div className="container">
@@ -39,7 +39,7 @@ const InfoBoletoPage = () => {
         </section>
         <section className="motivo">
           <div className="motivo-info">
-            <h3>Boleto</h3>
+            <h3>Boleto Falso</h3>
             <p>
               Lorem ipsum dolor sit amet consectetur adipisicing elit. Mollitia,
               optio magni. Deleniti, nisi. Fugiat, doloremque eos!
