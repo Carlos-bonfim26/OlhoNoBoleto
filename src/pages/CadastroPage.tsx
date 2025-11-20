@@ -1,5 +1,5 @@
 import React from "react";
-import './Autenticacao.css';
+import './Main.css'
 import LoginImg from './img/autenticacaoIMG.svg';
 const CadastroPage = () => {
   return (

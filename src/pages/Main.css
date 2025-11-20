@@ -20,6 +20,7 @@ main {
   width: 100%;
   display: flex;
   flex-direction: column;
+  align-items: center;
 }
 .form {
   padding: 0.5rem;
@@ -58,6 +59,7 @@ form > input {
 }
 form > button {
   width: 90%;
+  cursor: pointer;
   height: 2rem;
   border-radius: 0.5rem;
   border: none;
@@ -92,4 +94,83 @@ form > button {
 }
 .img-footer > img {
   width: 70%;
+}
+.img-header {
+  width: 100%;
+  background-color: var(--secondary-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 12rem;
+  border-radius: 0% 0% 50% 50%;
+  margin-bottom: 2rem;
+}
+.img-header > img {
+  width: 30%;
+}
+.info-boleto {
+  margin-top: 2rem;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+}
+.info-boleto > .campo {
+  height: 2rem;
+  width: 10rem;
+  border: 0.2rem solid var(--text-color);
+  border-radius: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+.info-boleto > .campo > span {
+  margin-left: 0.5rem;
+  transform: translateY(-110%);
+  font-weight: 400;
+  color: var(--text-color);
+}
+.info-boleto > .campo > label {
+  font-weight: 600;
+  transform: translateY(-100%);
+}
+.motivo {
+  width: 80%;
+  border-radius: 0.5rem;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  margin: 1rem;
+  background-color: var(--secondary-color);
+  padding: 1rem;
+  color: var(--primary-color);
+  margin-top: 2rem;
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+.motivo p {
+  font-size: 0.8rem;
+}
+.motivo-info {
+  width: 70%;
+}
+.icon-report {
+  font-size: 4rem;
+}
+.btn-report {
+  cursor: pointer;
+  width: 90%;
+  height: 2.5rem;
+  font-size: 1.2rem;
+  text-align: center;
+  margin-bottom: 2rem;
+  border-radius: 0.5rem;
+  border: none;
+  background: linear-gradient(
+    120deg,
+    var(--secondary-color),
+    var(--quaternary-color)
+  );
+  color: var(--primary-color);
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
 }
