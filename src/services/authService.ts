@@ -3,6 +3,7 @@ import type {
   CadastroRequest,
   LoginRequest,
   User,
+  
 } from "../types/index";
 
 export const authService = {
