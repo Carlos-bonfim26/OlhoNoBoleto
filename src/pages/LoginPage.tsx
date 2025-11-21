@@ -3,7 +3,7 @@ import './Main.css'
 import LoginImg from './img/autenticacaoIMG.svg';
 const LoginPage = () => {
   return (
-     <div className="container">
+     <div className="container autenticadores">
          <main>
           <section className="form">
             <h1>Login</h1>

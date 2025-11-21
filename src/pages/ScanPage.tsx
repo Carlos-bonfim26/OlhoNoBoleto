@@ -2,8 +2,8 @@ import React, { useEffect, useRef } from "react";
 import { Html5QrcodeScanner } from "html5-qrcode";
 import logotipo from "./img/OlhoNoBoletoVermelhoLogotipo.png";
 import "./Main.css";
-import { FaUserCircle } from "react-icons/fa";
 
+import AreaDeUsuario from "../components/AreaDeUsuario";
 const ScanPage = () => {
   const scannerRef = useRef(null);
   useEffect(() => {
@@ -36,11 +36,8 @@ const ScanPage = () => {
       <main>
         <div id="reader" ref={scannerRef}></div>
 
-        <button className="btn-user">
-          {" "}
-          <FaUserCircle /> 
-          Área do usuário
-        </button>
+               <AreaDeUsuario />
+
       </main>
     </div>
   );
