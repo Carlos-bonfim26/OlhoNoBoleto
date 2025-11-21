@@ -2,13 +2,12 @@ import React, { forwardRef, useState, useEffect } from "react";
 import perfilIMG from './img/perfilIMG.svg';
 import './Main.css';
 import { useAuth } from "../contexts/AuthContext";
-import type { CadastroRequest } from "../types/index";
 import HomeScanButton from "../components/HomeScanButton";
 
 interface PerfilPageProps {}
 
 const PerfilPage = forwardRef<HTMLDivElement, PerfilPageProps>((props, ref) => {
-  const { user, cadastro, atualizarUsuario } = useAuth(); 
+  const { user, atualizarUsuario } = useAuth(); 
   const [nome, setNome] = useState(user?.nome || '');
   const [email, setEmail] = useState(user?.email || '');
   const [senha, setSenha] = useState('');

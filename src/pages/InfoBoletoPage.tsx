@@ -1,4 +1,3 @@
-import React from "react";
 import logotipo from "./img/OlhoNoBoletoVermelhoLogotipo.png";
 import { IoIosWarning } from "react-icons/io";
 

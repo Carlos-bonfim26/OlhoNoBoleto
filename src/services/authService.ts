@@ -2,7 +2,6 @@ import api from "./API";
 import type {
   CadastroRequest,
   LoginRequest,
-  AuthResponse,
   User,
 } from "../types/index";
 
@@ -47,7 +46,7 @@ export const authService = {
           nome: userFromBackend.nome,
           email: userFromBackend.email,
           senha: userFromBackend.senha,
-          role: userFromBackend.role || "ROLE_USER", // ← Role REAL do backend
+          role: userFromBackend.role || "ROLE_USER",
         },
       };
     } catch (error: any) {

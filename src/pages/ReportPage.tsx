@@ -1,4 +1,3 @@
-import React from "react";
 import logotipo from "./img/OlhoNoBoletoVermelhoLogotipo.png";
 import ReportImg from "./img/Warning-pana.svg";
 import AreaDeUsuario from "../components/AreaDeUsuario";
