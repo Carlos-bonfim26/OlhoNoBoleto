@@ -23,12 +23,9 @@ dist-ssr
 *.sln
 *.sw?
 
-package-lock.json
 yarn.lock
 pnpm-lock.yaml
-package.json
-tsconfig.json
-tsconfig.node.json
+
 .vite
 .env
 .env.*.local
@@ -39,6 +36,4 @@ tsconfig.node.json
 .env.production.local
 .env.*.test
 .env.test.local
-eslint.config.js
-tsconfig.app.json
-vite.config.ts
+
