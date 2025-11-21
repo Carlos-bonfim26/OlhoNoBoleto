@@ -1,35 +1,21 @@
-// src/contexts/AuthContext.tsx (ATUALIZADO)
-import React, { createContext, useState, useContext, useEffect } from "react";
-import type { ReactNode } from "react";
-import { authService } from "../services/authService";
-import type { User, LoginRequest, CadastroRequest } from "../types/index";
+import React, { createContext, useState, useContext, useEffect } from 'react';
+import { authService } from '../services/authService';
+import type { User, LoginRequest, CadastroRequest } from '../types';
+import { jwtDecode } from 'jwt-decode';
 
 interface AuthContextType {
   user: User | null;
+  login: (credentials: LoginRequest) => Promise<void>;
+  cadastro: (userData: CadastroRequest) => Promise<void>; // ✅ ADICIONAR ESTA LINHA
+  logout: () => void;
   isAuthenticated: boolean;
   loading: boolean;
-  login: (credentials: LoginRequest) => Promise<void>;
-  cadastro: (userData: CadastroRequest) => Promise<void>;
-  logout: () => void;
-  checkAuth: () => Promise<boolean>;
-  atualizarUsuario: (id: string, userData: CadastroRequest) => Promise<void>; // Nova função
+  checkAuth: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error("useAuth must be used within an AuthProvider");
-  }
-  return context;
-};
-
-interface AuthProviderProps {
-  children: ReactNode;
-}
-
-export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -37,92 +23,100 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     checkAuth();
   }, []);
 
-  const checkAuth = async (): Promise<boolean> => {
-    const userData = localStorage.getItem("userData");
-    const authTimestamp = localStorage.getItem("authTimestamp");
+  const checkAuth = () => {
+    const token = localStorage.getItem('accessToken');
+    if (token) {
+      try {
+        const decodedToken: any = jwtDecode(token);
+        const currentTime = Date.now() / 1000;
 
-    if (userData && authTimestamp) {
-      const timestamp = parseInt(authTimestamp);
-      const now = Date.now();
-      const hoursElapsed = (now - timestamp) / (1000 * 60 * 60);
-
-      if (hoursElapsed < 24) {
-        setUser(JSON.parse(userData));
-        setLoading(false);
-        return true;
-      } else {
+        if (decodedToken.exp < currentTime) {
+          logout();
+        } else {
+          const userData = localStorage.getItem('userData');
+          if (userData) {
+            setUser(JSON.parse(userData) as User);
+          }
+        }
+      } catch (error) {
+        console.error('Erro ao verificar token:', error);
         logout();
-        return false;
       }
     }
-
     setLoading(false);
-    return false;
   };
 
-  const login = async (credentials: LoginRequest) => {
+      const login = async (credentials: LoginRequest) => {
+    setLoading(true);
     try {
-      const response = await authService.login(credentials);
-
-      if (response.success) {
-        const userData: User = {
-          nome: credentials.email.split("@")[0],
-          email: credentials.email,
-          senha: credentials.senha,
-          role: "ROLE_USER",
+      const result = await authService.login(credentials);
+      if (result.success && result.tokens && result.user) {
+        localStorage.setItem('accessToken', result.tokens.accessToken);
+        localStorage.setItem('refreshToken', result.tokens.refreshToken);
+        
+        const userObj: User = {
+          nome: result.user.nome ?? '',
+          email: result.user.email ?? '',
+          role: result.user.role ?? ''
         };
-
-        setUser(userData);
-        localStorage.setItem("userData", JSON.stringify(userData));
-        localStorage.setItem("authTimestamp", Date.now().toString());
+        localStorage.setItem('userData', JSON.stringify(userObj));
+        setUser(userObj);
       } else {
-        throw new Error(response.message);
+        throw new Error(result.message);
       }
     } catch (error: any) {
       throw new Error(error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
- const cadastro = async (userData: CadastroRequest) => {
-  try {
-    const response = await authService.cadastro(userData);
-
-    if (response.success && response.user) {
-      setUser(response.user);
-      localStorage.setItem('userData', JSON.stringify(response.user));
-      localStorage.setItem('authTimestamp', Date.now().toString());
-    } else {
-      throw new Error(response.message);
+  // ✅ ADICIONAR FUNÇÃO CADASTRO
+  const cadastro = async (userData: CadastroRequest) => {
+    setLoading(true);
+    try {
+      const result = await authService.cadastro(userData);
+      if (result.success) {
+        // Cadastro bem-sucedido, mas não faz login automático
+        console.log('Usuário cadastrado com sucesso');
+      } else {
+        throw new Error(result.message);
+      }
+    } catch (error: any) {
+      throw new Error(error.message);
+    } finally {
+      setLoading(false);
     }
-  } catch (error: any) {
-    throw new Error(error.message);
-  }
-};
+  };
 
   const logout = () => {
     setUser(null);
-    localStorage.removeItem("userData");
-    localStorage.removeItem("authTimestamp");
-  };
-  const atualizarUsuario = async (id: string, userData: CadastroRequest) => {
-    try {
-      const updatedUser = await authService.atualizarUsuario(id, userData);
-      setUser(updatedUser);
-      localStorage.setItem("userData", JSON.stringify(updatedUser));
-    } catch (error: any) {
-      throw new Error(error.message);
-    }
-  };
-  const value = {
-    user,
-    isAuthenticated: !!user,
-    loading,
-    login,
-    cadastro,
-    logout,
-    checkAuth,
-    atualizarUsuario,
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
+    localStorage.removeItem('userData');
   };
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  const isAuthenticated = !!user;
+
+  return (
+    <AuthContext.Provider value={{ 
+      user, 
+      login, 
+      cadastro, // ✅ ADICIONAR NO PROVIDER
+      logout, 
+      isAuthenticated, 
+      loading, 
+      checkAuth 
+    }}>
+      {children}
+    </AuthContext.Provider>
+  );
+};
+
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
 };

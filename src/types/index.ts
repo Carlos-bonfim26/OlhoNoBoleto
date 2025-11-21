@@ -47,3 +47,10 @@ export interface User {
   senha?: String;
   role?: string;
 }
+export interface LoginResponse {
+  accessToken: string;
+  refreshToken: string;
+  email: string;
+  role: string;
+  nome: string;
+}

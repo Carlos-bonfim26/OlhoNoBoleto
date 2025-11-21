@@ -1,96 +1,68 @@
-import React, { forwardRef, useState, useEffect } from "react";
-import perfilIMG from './img/perfilIMG.svg';
+import React, { useState } from 'react';
+import { useAuth } from '../contexts/AuthContext';
+import { useNavigate, useLocation } from 'react-router-dom';
 import './Main.css';
-import { useAuth } from "../contexts/AuthContext";
-import HomeScanButton from "../components/HomeScanButton";
+import LoginImg from './img/autenticacaoIMG.svg';
 
-interface PerfilPageProps {}
-
-const PerfilPage = forwardRef<HTMLDivElement, PerfilPageProps>((props, ref) => {
-  const { user, atualizarUsuario } = useAuth(); 
-  const [nome, setNome] = useState(user?.nome || '');
-  const [email, setEmail] = useState(user?.email || '');
+const LoginPage: React.FC = () => {
+  const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
   const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    if (user) {
-      setNome(user.nome || '');
-      setEmail(user.email);
-    }
-  }, [user]);
+  const { login } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from?.pathname || '/scan';
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-
     try {
-
-      if (user) {
-        const updatedUser = await atualizarUsuario(user.email, { nome, email, senha });
-        alert("Dados atualizados com sucesso!");
-      }
+      await login({ email, senha });
+      navigate(from, { replace: true });
     } catch (error: any) {
-      alert(error.message);
+      alert(`Erro: ${error.message}`);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="container" ref={ref}>
-      <header className="header-user">
-        <div>
-          <h1>Olá <span>{user?.nome}</span></h1>
-          <p>Contente em te ver novamente!</p>
-        </div>
-        <HomeScanButton/>
-      </header>
-      <div className="perfil-page">
-        <main className="info-user">
+    <div className="container autenticadores">
+      <main>
+        <section className="form">
+          <h1>Login</h1>
+          <h3>Não possui uma conta? <span onClick={() => navigate('/cadastro')}>Cadastre-se</span></h3>
           <form onSubmit={handleSubmit}>
-            <h2>Suas informações</h2>
-          
-            <input
-              type="text"
-              name="nome"
-              id="nome"
-              placeholder="Nome completo"
-              value={nome}
-              onChange={(e) => setNome(e.target.value)}
-              required
-            />
             <input
               type="email"
               name="email"
               id="email"
+              placeholder="E-mail"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="E-mail"
               required
             />
             <input
               type="password"
               name="senha"
               id="senha"
-              placeholder="Nova senha (deixe em branco para não alterar)"
+              placeholder="Senha"
               value={senha}
               onChange={(e) => setSenha(e.target.value)}
+              required
             />
             <button type="submit" disabled={loading}>
-              {loading ? "Salvando..." : "Salvar dados"}
+              {loading ? 'Carregando...' : 'Entrar'}
             </button>
           </form>
-        </main>
+        </section>
         <div className="horizonte"></div>
-        <footer className="img-footer">
-          <img src={perfilIMG} alt="Imagem de perfil" />
-        </footer>
-      </div>
+        <section className="img-footer">
+          <img src={LoginImg} alt="Moça realizando Login" />
+        </section>
+      </main>
     </div>
   );
-});
+};
 
-PerfilPage.displayName = "PerfilPage";
-
-export default PerfilPage;
+export default LoginPage;
