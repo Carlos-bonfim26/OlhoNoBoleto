@@ -13,4 +13,10 @@ export interface BoletoResponseDTO {
   motivo?: string;
   recomendacao: string;
   documentBeneficiario: string;
+  totalQueixas: number; // Adicionando o campo totalQueixas
+}
+export interface Beneficiario {
+    nome: string;
+    document: string;
+    totalQueixas: number;
 }

@@ -145,9 +145,17 @@ form > button {
   height: 100%;
   margin-left: 0.5rem;
   font-size: 0.8rem;
-  transform: translateY(-110%);
+  transform: translateY(-70%);
   font-weight: 400;
   color: var(--text-color);
+}
+.boleto{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.boleto > img{
+  width: 20rem;
 }
 .info-boleto > .campo > label,
 .form-report .campo label {
@@ -226,7 +234,7 @@ form > button {
   color: var(--text-color);
   outline: var(--text-color);
 }
-.form-report form > button {
+.form-report form > button, .btn {
   width: 100%;
   height: 2.5rem;
   border-radius: 0.5rem;
@@ -404,6 +412,7 @@ form > button {
   }
   .info-boleto > .campo,
   .form-report .campo {
-    width: 12rem;
+    width: 15rem;
+    height: 3rem;
   }
 }

@@ -3,14 +3,15 @@ import type { BoletoResponseDTO } from "../types/boleto";
 import './Main.css'
 import AreaDeUsuario from "../components/AreaDeUsuario";
 import HomeScanButton from "../components/HomeScanButton";
+import image from './img/Warning-pana.svg'
 import logotipo from './img/OlhoNoBoletoVermelhoLogotipo.png'
+
 const InfoBoletoPage = () => {
   const location = useLocation();
   const { boleto } = location.state as { boleto: BoletoResponseDTO };
 
   const handleReportarBoleto = () => {
     // Placeholder para a função de reportar boleto
-    // Como não temos o endpoint, vamos apenas exibir um alerta
     alert("Funcionalidade de reporte ainda não implementada.");
   };
 
@@ -43,6 +44,10 @@ const InfoBoletoPage = () => {
               <span>{boleto.beneficiarioNome}</span>
             </div>
             <div className="campo">
+              <label>Data da Validação</label>
+              <span>{boleto.dataValidacao}</span>
+            </div>
+            <div className="campo">
               <label>Status</label>
               <span className={`status-${boleto.statusValidacao}`}>
                 {boleto.statusValidacao.toUpperCase()}
@@ -53,6 +58,10 @@ const InfoBoletoPage = () => {
               <span className={`recomendacao-${boleto.recomendacao === 'PAGAR' ? 'pagar' : 'nao-pagar'}`}>
                 {boleto.recomendacao}
               </span>
+            </div>
+            <div className="campo">
+              <label>Mensagem</label>
+              <span>{boleto.mensagem}</span>
             </div>
           </section>
 
@@ -66,8 +75,9 @@ const InfoBoletoPage = () => {
           )}
         </div>
 
-        <div className="acoes-boleto">
-          <button className="btn-report" onClick={handleReportarBoleto}>
+        <div className="boleto">
+          <img src={image} alt="" />
+          <button className="btn-report btn" onClick={handleReportarBoleto}>
             Reportar Boleto
           </button>
         </div>

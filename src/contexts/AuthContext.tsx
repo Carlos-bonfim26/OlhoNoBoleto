@@ -1,122 +1,101 @@
-import React, { createContext, useState, useContext, useEffect } from 'react';
-import { authService } from '../services/authService';
-import type { User, LoginRequest, CadastroRequest } from '../types';
-import { jwtDecode } from 'jwt-decode';
+// // src/contexts/AuthContext.tsx
+// import React, { createContext, useState, useContext, useEffect } from 'react';
+// import { authService } from '../services/authService';
+// import type{ User, LoginRequest, CadastroRequest } from '../types';
 
-interface AuthContextType {
-  user: User | null;
-  login: (credentials: LoginRequest) => Promise<void>;
-  cadastro: (userData: CadastroRequest) => Promise<void>; // ✅ ADICIONAR ESTA LINHA
-  logout: () => void;
-  isAuthenticated: boolean;
-  loading: boolean;
-  checkAuth: () => void;
-}
+// interface AuthContextType {
+//   user: User | null;
+//   isAuthenticated: boolean;
+//   login: (credentials: LoginRequest) => Promise<void>;
+//   cadastro: (userData: CadastroRequest) => Promise<void>;
+//   logout: () => Promise<void>;
+//   loading: boolean;
+//   checkAuth: () => Promise<void>;
+// }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+// const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+// export const useAuth = () => {
+//   const context = useContext(AuthContext);
+//   if (context === undefined) {
+//     throw new Error('useAuth must be used within an AuthProvider');
+//   }
+//   return context;
+// };
 
-  useEffect(() => {
-    checkAuth();
-  }, []);
+// export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+//   const [user, setUser] = useState<User | null>(null);
+//   const [loading, setLoading] = useState(true);
 
-  const checkAuth = () => {
-    const token = localStorage.getItem('accessToken');
-    if (token) {
-      try {
-        const decodedToken: any = jwtDecode(token);
-        const currentTime = Date.now() / 1000;
+//   const checkAuth = async () => {
+//     try {
+//       const userData = await authService.getCurrentUser();
+//       setUser(userData);
+//     } catch (error) {
+//       setUser(null);
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
 
-        if (decodedToken.exp < currentTime) {
-          logout();
-        } else {
-          const userData = localStorage.getItem('userData');
-          if (userData) {
-            setUser(JSON.parse(userData) as User);
-          }
-        }
-      } catch (error) {
-        console.error('Erro ao verificar token:', error);
-        logout();
-      }
-    }
-    setLoading(false);
-  };
+//   useEffect(() => {
+//     checkAuth();
+//   }, []);
 
-      const login = async (credentials: LoginRequest) => {
-    setLoading(true);
-    try {
-      const result = await authService.login(credentials);
-      if (result.success && result.tokens && result.user) {
-        localStorage.setItem('accessToken', result.tokens.accessToken);
-        localStorage.setItem('refreshToken', result.tokens.refreshToken);
-        
-        const userObj: User = {
-          nome: result.user.nome ?? '',
-          email: result.user.email ?? '',
-          role: result.user.role ?? ''
-        };
-        localStorage.setItem('userData', JSON.stringify(userObj));
-        setUser(userObj);
-      } else {
-        throw new Error(result.message);
-      }
-    } catch (error: any) {
-      throw new Error(error.message);
-    } finally {
-      setLoading(false);
-    }
-  };
+//   const login = async (credentials: LoginRequest) => {
+//     setLoading(true);
+//     try {
+//       const result = await authService.login(credentials);
+//       if (!result.success) {
+//         throw new Error(result.message);
+//       }
+//       // Após login bem-sucedido, buscar dados do usuário
+//       await checkAuth();
+//     } catch (error: any) {
+//       setUser(null);
+//       throw error;
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
 
-  // ✅ ADICIONAR FUNÇÃO CADASTRO
-  const cadastro = async (userData: CadastroRequest) => {
-    setLoading(true);
-    try {
-      const result = await authService.cadastro(userData);
-      if (result.success) {
-        // Cadastro bem-sucedido, mas não faz login automático
-        console.log('Usuário cadastrado com sucesso');
-      } else {
-        throw new Error(result.message);
-      }
-    } catch (error: any) {
-      throw new Error(error.message);
-    } finally {
-      setLoading(false);
-    }
-  };
+//   const cadastro = async (userData: CadastroRequest) => {
+//     setLoading(true);
+//     try {
+//       const result = await authService.cadastro(userData);
+//       if (!result.success) {
+//         throw new Error(result.message);
+//       }
+//       // Após cadastro, fazer login automaticamente
+//       await login({ email: userData.email, senha: userData.senha });
+//     } catch (error: any) {
+//       throw error;
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
 
-  const logout = () => {
-    setUser(null);
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('refreshToken');
-    localStorage.removeItem('userData');
-  };
+//   const logout = async () => {
+//     setLoading(true);
+//     try {
+//       await authService.logout();
+//     } catch (error) {
+//       console.error('Erro ao fazer logout:', error);
+//     } finally {
+//       setUser(null);
+//       setLoading(false);
+//     }
+//   };
 
-  const isAuthenticated = !!user;
+//   const value = {
+//     user,
+//     isAuthenticated: !!user,
+//     login,
+//     cadastro,
+//     logout,
+//     loading,
+//     checkAuth,
+//   };
 
-  return (
-    <AuthContext.Provider value={{ 
-      user, 
-      login, 
-      cadastro, // ✅ ADICIONAR NO PROVIDER
-      logout, 
-      isAuthenticated, 
-      loading, 
-      checkAuth 
-    }}>
-      {children}
-    </AuthContext.Provider>
-  );
-};
-
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
-};
+//   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+// };

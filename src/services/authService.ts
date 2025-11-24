@@ -1,69 +1,74 @@
-import api from "./API";
-import type {
-  CadastroRequest,
-  LoginRequest,
-  User,
-  
-} from "../types/index";
+// // src/services/authService.ts
+// import api from "./API";
+// import type { CadastroRequest, LoginRequest, User } from "../types/index";
 
-export const authService = {
-async login(credentials: LoginRequest): Promise<{ success: boolean; message: string; user?: User; tokens?: { accessToken: string, refreshToken: string } }> {
-  try {
-    const response = await api.post("/auth/login", credentials);
-    const { accessToken, refreshToken, email, role, nome } = response.data;
+// export const authService = {
+//   async login(credentials: LoginRequest): Promise<{ success: boolean; message: string; user?: User }> {
+//     try {
+//       // Para cookies/sessão, precisamos enviar como form-data
+//       const formData = new FormData();
+//       formData.append('username', credentials.email);
+//       formData.append('password', credentials.senha);
 
-    // Armazene os tokens no localStorage ou em um estado global (via context)
-    localStorage.setItem('accessToken', accessToken);
-    localStorage.setItem('refreshToken', refreshToken);
+//       const response = await api.post("/auth/login", formData, {
+//         headers: {
+//           'Content-Type': 'application/x-www-form-urlencoded'
+//         }
+//       });
 
-    return {
-      success: true,
-      message: 'Login realizado com sucesso',
-      user: {
-        nome,
-        email,
-        role,
-      },
-      tokens: {
-        accessToken,
-        refreshToken
-      }
-    };
-  } catch (error: any) {
-    const errorMessage = error.response?.data || "Erro ao fazer login";
-    return {
-      success: false,
-      message: errorMessage,
-    };
-  }
-},
- async cadastro(userData: CadastroRequest): Promise<{ success: boolean; message: string; user?: User }> {
-  try {
-    const response = await api.post("/auth/cadastro", userData);
-    const userFromBackend = response.data;
-    return {
-      success: true,
-      message: "Cadastro realizado com sucesso",
-      user: {
-        nome: userFromBackend.nome,
-        email: userFromBackend.email,
-        role: userFromBackend.role || "ROLE_USER",
-      },
-    };
-  } catch (error: any) {
-    const errorMessage = error.response?.data || "Erro ao cadastrar usuário";
-    return {
-      success: false,
-      message: errorMessage,
-    };
-  }
-},
-  async atualizarUsuario(id: string, userData: CadastroRequest): Promise<User> {
-    try {
-      const response = await api.put(`/auth/atualizar/${id}`, userData);
-      return response.data;
-    } catch (error: any) {
-      throw new Error(error.response?.data || "Erro ao atualizar usuário");
-    }
-  },
-};
+//       return {
+//         success: true,
+//         message: response.data.message || "Login bem-sucedido",
+//         user: {
+//           email: credentials.email,
+//           role: "ROLE_USER", // Isso virá do backend no endpoint do usuário atual
+//         },
+//       };
+//     } catch (error: any) {
+//       const errorMessage = error.response?.data?.message || error.response?.data || "Erro ao fazer login";
+//       return {
+//         success: false,
+//         message: errorMessage,
+//       };
+//     }
+//   },
+
+//   async cadastro(userData: CadastroRequest): Promise<{ success: boolean; message: string; user?: User }> {
+//     try {
+//       const response = await api.post("/auth/cadastro", userData);
+      
+//       return {
+//         success: true,
+//         message: "Cadastro realizado com sucesso",
+//         user: {
+//           nome: userData.nome,
+//           email: userData.email,
+//           role: "ROLE_USER",
+//         },
+//       };
+//     } catch (error: any) {
+//       const errorMessage = error.response?.data || "Erro ao cadastrar usuário";
+//       return {
+//         success: false,
+//         message: errorMessage,
+//       };
+//     }
+//   },
+
+//   async getCurrentUser(): Promise<User> {
+//     try {
+//       const response = await api.get("/auth/usuario-atual");
+//       return response.data;
+//     } catch (error: any) {
+//       throw new Error(error.response?.data || "Erro ao buscar usuário atual");
+//     }
+//   },
+
+//   async logout(): Promise<void> {
+//     try {
+//       await api.post("/auth/logout");
+//     } catch (error: any) {
+//       throw new Error(error.response?.data || "Erro ao fazer logout");
+//     }
+//   }
+// };
