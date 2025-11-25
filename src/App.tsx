@@ -11,42 +11,41 @@ import ScanPage from './pages/ScanPage'
 
 function App() {
   return (
-   
-      <Router>
-        <div className="App">
-          <Routes>
-            {/* <Route path="/" element={<LoginPage />} />
-             <Route path="/login" element={<LoginPage />} />
+    <Router>
+      <div className="App">
+        <Routes>
+          {/* <Route path="/" element={<LoginPage />} />j
+            <Route path="/login" element={<LoginPage />} />
             <Route path="/cadastro" element={<CadastroPage />} /> */}
-            <Route 
-              path="/scan" 
-              element={
-                
-                  <ScanPage />
-              } 
-            />
-            <Route 
-              path="/infoBoleto" 
-              element={
-                  <InfoBoletoPage />
-              } 
-            />
-            <Route 
-              path="/reportar-boleto" 
-              element={
-                  <ReportPage />
-                
-              } 
-            />
-            {/* <Route 
+          <Route
+            path="/scan"
+            element={
+
+              <ScanPage />
+            }
+          />
+          <Route
+            path="/infoBoleto"
+            element={
+              <InfoBoletoPage />
+            }
+          />
+          <Route
+            path="/reportar-boleto"
+            element={
+              <ReportPage />
+
+            }
+          />
+          {/* <Route 
               path="/perfil" 
               element={
                   <PerfilPage />
               } 
             /> */}
-          </Routes>
-        </div>
-      </Router>
+        </Routes>
+      </div>
+    </Router>
   )
 }
 
