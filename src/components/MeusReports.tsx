@@ -1,4 +1,3 @@
-// src/components/MeusReports.tsx
 import React, { useState, useEffect } from 'react';
 import { reportService } from '../services/reportService';
 import type { ReportResponseDTO } from '../types/report';

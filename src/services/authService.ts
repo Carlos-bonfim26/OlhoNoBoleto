@@ -6,7 +6,6 @@ export const authService = {
     try {
       console.log('🔐 Iniciando processo de login...');
 
-      // 🔥 IMPORTANTE: Formato que o Spring Security espera
       const formData = new URLSearchParams();
       formData.append('email', credentials.email);
       formData.append('senha', credentials.senha);
@@ -21,10 +20,8 @@ export const authService = {
 
       console.log('✅ Login bem-sucedido no servidor');
 
-      // Aguardar um pouco para garantir que a sessão foi estabelecida
       await new Promise(resolve => setTimeout(resolve, 100));
 
-      // Buscar dados do usuário autenticado
       const userData = await this.getCurrentUser();
       
       return {
@@ -95,7 +92,6 @@ async getCurrentUser(): Promise<User> {
       
       console.log('✅ Dados do usuário obtidos:', response.data);
       
-      // Garante que retorna um objeto User com pelo menos email
       const userData: User = {
         id: response.data.id,
         nome: response.data.nome,
@@ -127,19 +123,15 @@ async getCurrentUser(): Promise<User> {
     } catch (error: any) {
       console.error('❌ Erro no logout:', error);
       
-      // Mesmo com erro, consideramos o logout como realizado
-      // pois podemos limpar o estado local
       throw new Error("Logout realizado (com possíveis avisos)");
     }
   },
 
-  // Método adicional para verificar saúde da API
   async healthCheck(): Promise<boolean> {
     try {
       await api.get("/auth/usuario-atual", { timeout: 5000 });
       return true;
     } catch (error: any) {
-      // Se der 401, ainda está respondendo (só não está autenticado)
       if (error.response?.status === 401) {
         return true;
       }

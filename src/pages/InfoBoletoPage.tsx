@@ -16,7 +16,6 @@ const InfoBoletoPage = () => {
   
   const navigate = useNavigate();
 
-  // 🔥 VALIDAÇÃO PARA EVITAR ERROS DE UNDEFINED
   if (!state?.boleto) {
     return (
       <div className="container boleto-info-page">
@@ -41,7 +40,6 @@ const InfoBoletoPage = () => {
   const { boleto } = state;
   const { beneficiario } = state;
 
-  // 🔥 FUNÇÃO PARA FORMATAR VALOR COM SEGURANÇA
   const formatarValor = (valor: number | undefined): string => {
     if (valor === undefined || valor === null) {
       return "N/A";
@@ -49,13 +47,11 @@ const InfoBoletoPage = () => {
     return `R$ ${valor.toFixed(2)}`;
   };
 
-  // 🔥 FUNÇÃO PARA OBTER CLASSE DE STATUS
   const getStatusClass = (status: string | undefined): string => {
     if (!status) return "status-desconhecido";
     return `status-${status.toLowerCase()}`;
   };
 
-  // 🔥 FUNÇÃO PARA OBTER CLASSE DE RECOMENDAÇÃO
   const getRecomendacaoClass = (recomendacao: string | undefined): string => {
     if (!recomendacao) return "recomendacao-desconhecida";
     return `recomendacao-${recomendacao.toLowerCase() === "pagar" ? "pagar" : "nao-pagar"}`;
@@ -67,7 +63,7 @@ const InfoBoletoPage = () => {
         beneficiario: boleto.beneficiarioNome || "Não identificado",
         cnpj: boleto.documentBeneficiario || "Não identificado",
         boletoId: boleto.id,
-        beneficiarioId: beneficiario?.id || boleto.id // 🔥 FALLBACK SE beneficiario.id NÃO EXISTIR
+        beneficiarioId: beneficiario?.id || boleto.id
       },
     });
   };
@@ -90,7 +86,7 @@ const InfoBoletoPage = () => {
             </div>
             <div className="campo">
               <label>Valor</label>
-              <span>{formatarValor(boleto.valor)}</span> {/* 🔥 AGORA SEGURO */}
+              <span>{formatarValor(boleto.valor)}</span> {}
             </div>
             <div className="campo">
               <label>CNPJ do Beneficiário</label>

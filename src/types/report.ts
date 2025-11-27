@@ -1,4 +1,3 @@
-// src/types/report.ts
 export interface ReportRequest {
     id?: string;
     usuarioNome?: string;
@@ -42,6 +41,5 @@ export interface DashboardData {
     }>;
 }
 
-// Usando union types em vez de enum para melhor compatibilidade
 export type ReportStatus = 'PENDENTE' | 'VALIDADO' | 'FALSO';
 export type ReportSeverity = 'BAIXA' | 'MEDIA' | 'ALTA';

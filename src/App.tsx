@@ -18,7 +18,7 @@ function App() {
             <Route path="/" element={<LoginPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/cadastro" element={<CadastroPage />} />
-            {/* Rotas protegidas */}
+            {}
             <Route
               path="/scan"
               element={
