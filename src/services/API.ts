@@ -1,19 +1,8 @@
 import axios from 'axios';
 
-const getBaseURL = () => {
-  if (typeof import.meta !== 'undefined' && import.meta.env) {
-    return import.meta.env.MODE === 'development' 
-      ? 'http://localhost:10000'  
-      : 'https://tight-roxana-carlosbonfim26-bca61679.koyeb.app';
-  }
-  
-  return window.location.hostname === 'localhost' 
-    ? 'http://localhost:10000'
-    : 'https://tight-roxana-carlosbonfim26-bca61679.koyeb.app';
-};
 
 const api = axios.create({
-  baseURL: getBaseURL(),
+  baseURL: 'https://tight-roxana-carlosbonfim26-bca61679.koyeb.app',
   timeout: 30000,
   withCredentials: true,
 });
