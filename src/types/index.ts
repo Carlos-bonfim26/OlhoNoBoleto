@@ -18,3 +18,16 @@ export interface User {
   senha?: string;
   role?: string;
 }
+
+export interface AuthResponse {
+  success: boolean;
+  message: string;
+  user?: User;
+}
+
+// Tipo para resposta de erro padrão
+export interface ErrorResponse {
+  message: string;
+  code?: string;
+  timestamp?: string;
+}
