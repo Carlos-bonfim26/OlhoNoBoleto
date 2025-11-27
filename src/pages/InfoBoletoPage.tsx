@@ -1,18 +1,75 @@
 import { useLocation } from "react-router-dom";
-import type { BoletoResponseDTO } from "../types/boleto";
+import type { BoletoResponseDTO, BeneficiarioResponseDTO } from "../types/boleto";
 import "./Main.css";
 import AreaDeUsuario from "../components/AreaDeUsuario";
 import HomeScanButton from "../components/HomeScanButton";
 import image from "./img/Warning-pana.svg";
 import logotipo from "./img/OlhoNoBoletoVermelhoLogotipo.png";
 import { useNavigate } from "react-router-dom";
+
 const InfoBoletoPage = () => {
   const location = useLocation();
-  const { boleto } = location.state as { boleto: BoletoResponseDTO };
+  const state = location.state as { 
+    boleto: BoletoResponseDTO; 
+    beneficiario?: BeneficiarioResponseDTO 
+  };
+  
   const navigate = useNavigate();
 
+  // 🔥 VALIDAÇÃO PARA EVITAR ERROS DE UNDEFINED
+  if (!state?.boleto) {
+    return (
+      <div className="container boleto-info-page">
+        <header className="header-boleto-info">
+          <img src={logotipo} alt="logo olho no boleto" />
+          <AreaDeUsuario />
+          <HomeScanButton />
+        </header>
+        <main>
+          <div className="error-message">
+            <h2>Erro: Dados do boleto não encontrados</h2>
+            <p>Volte à tela de scan e tente novamente.</p>
+            <button onClick={() => navigate('/scan')} className="btn">
+              Voltar ao Scan
+            </button>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  const { boleto } = state;
+  const { beneficiario } = state;
+
+  // 🔥 FUNÇÃO PARA FORMATAR VALOR COM SEGURANÇA
+  const formatarValor = (valor: number | undefined): string => {
+    if (valor === undefined || valor === null) {
+      return "N/A";
+    }
+    return `R$ ${valor.toFixed(2)}`;
+  };
+
+  // 🔥 FUNÇÃO PARA OBTER CLASSE DE STATUS
+  const getStatusClass = (status: string | undefined): string => {
+    if (!status) return "status-desconhecido";
+    return `status-${status.toLowerCase()}`;
+  };
+
+  // 🔥 FUNÇÃO PARA OBTER CLASSE DE RECOMENDAÇÃO
+  const getRecomendacaoClass = (recomendacao: string | undefined): string => {
+    if (!recomendacao) return "recomendacao-desconhecida";
+    return `recomendacao-${recomendacao.toLowerCase() === "pagar" ? "pagar" : "nao-pagar"}`;
+  };
+
   const handleReportarBoleto = () => {
-    navigate("/reportar-boleto");
+    navigate("/reportar-boleto", {
+      state: {
+        beneficiario: boleto.beneficiarioNome || "Não identificado",
+        cnpj: boleto.documentBeneficiario || "Não identificado",
+        boletoId: boleto.id,
+        beneficiarioId: beneficiario?.id || boleto.id // 🔥 FALLBACK SE beneficiario.id NÃO EXISTIR
+      },
+    });
   };
 
   return (
@@ -29,43 +86,39 @@ const InfoBoletoPage = () => {
           <section className="info-boleto">
             <div className="campo">
               <label>Banco Emissor</label>
-              <span>{boleto.banco}</span>
+              <span>{boleto.banco || "N/A"}</span>
             </div>
             <div className="campo">
               <label>Valor</label>
-              <span>R$ {boleto.valor.toFixed(2)}</span>
+              <span>{formatarValor(boleto.valor)}</span> {/* 🔥 AGORA SEGURO */}
             </div>
             <div className="campo">
               <label>CNPJ do Beneficiário</label>
-              <span>{boleto.documentBeneficiario}</span>
+              <span>{boleto.documentBeneficiario || "N/A"}</span>
             </div>
             <div className="campo">
               <label>Beneficiário</label>
-              <span>{boleto.beneficiarioNome}</span>
+              <span>{boleto.beneficiarioNome || "N/A"}</span>
             </div>
             <div className="campo">
               <label>Data da Validação</label>
-              <span>{boleto.dataValidacao}</span>
+              <span>{boleto.dataValidacao || "N/A"}</span>
             </div>
             <div className="campo">
               <label>Status</label>
-              <span className={`status-${boleto.statusValidacao}`}>
-                {boleto.statusValidacao.toUpperCase()}
+              <span className={getStatusClass(boleto.statusValidacao)}>
+                {boleto.statusValidacao ? boleto.statusValidacao.toUpperCase() : "N/A"}
               </span>
             </div>
             <div className="campo">
               <label>Recomendação</label>
-              <span
-                className={`recomendacao-${
-                  boleto.recomendacao === "PAGAR" ? "pagar" : "nao-pagar"
-                }`}
-              >
-                {boleto.recomendacao}
+              <span className={getRecomendacaoClass(boleto.recomendacao)}>
+                {boleto.recomendacao || "N/A"}
               </span>
             </div>
             <div className="campo">
               <label>Mensagem</label>
-              <span>{boleto.mensagem}</span>
+              <span>{boleto.mensagem || "N/A"}</span>
             </div>
           </section>
 
@@ -80,7 +133,7 @@ const InfoBoletoPage = () => {
         </div>
 
         <div className="boleto">
-          <img src={image} alt="" />
+          <img src={image} alt="Ilustração de aviso" />
           <button className="btn-report btn" onClick={handleReportarBoleto}>
             Reportar Boleto
           </button>

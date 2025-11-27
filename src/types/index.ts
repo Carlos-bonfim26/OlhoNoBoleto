@@ -11,6 +11,12 @@ export interface CadastroRequest {
   role?: string;
 }
 
+export interface UpdateProfileRequest { // 🔥 NOVO TIPO
+  nome: string;
+  email: string;
+  senha?: string;
+}
+
 export interface User {
   id?: string;
   nome?: string;
@@ -25,7 +31,6 @@ export interface AuthResponse {
   user?: User;
 }
 
-// Tipo para resposta de erro padrão
 export interface ErrorResponse {
   message: string;
   code?: string;

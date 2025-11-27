@@ -3,6 +3,7 @@ export interface BoletoValidateRequestDTO {
 }
 
 export interface BoletoResponseDTO {
+  id:string;
   linhaDigitavel: string;
   banco: string;
   beneficiarioNome: string;
@@ -15,7 +16,8 @@ export interface BoletoResponseDTO {
   documentBeneficiario: string;
   totalQueixas: number; // Adicionando o campo totalQueixas
 }
-export interface Beneficiario {
+export interface BeneficiarioResponseDTO {
+  id:string
     nome: string;
     document: string;
     totalQueixas: number;

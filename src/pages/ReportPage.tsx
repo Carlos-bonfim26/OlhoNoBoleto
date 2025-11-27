@@ -1,12 +1,21 @@
 // src/pages/ReportPage.tsx
 import React, { useState, type FormEvent, type ChangeEvent } from 'react';
-import logotipo from "/img/ClhoNoBoletoVermelhol.logotipo.png";
-import ReportImg from "/img/Warning-pana.svg";
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext'; // Importar useAuth
+import logotipo from "./img/OlhoNoBoletoVermelhoLogotipo.png";
+import ReportImg from "./img/reportarIMG.svg";
 import AreaDeUsuario from "../components/AreaDeUsuario";
 import HomeScanButton from "../components/HomeScanButton";
 import { reportService } from '../services/reportService';
-import type { ReportRequest, ReportSeverity } from '../types/report';
+import type { ReportRequest } from '../types/report';
 import "./Main.css";
+
+interface BoletoData {
+  beneficiario?: string;
+  cnpj?: string;
+  boletoId?: string;
+  beneficiarioId?: string;
+}
 
 interface FormData {
   titulo: string;
@@ -18,17 +27,27 @@ interface FormData {
 }
 
 const ReportPage: React.FC = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { user } = useAuth(); // Obter o usuário logado
+
+  const boletoData = (location.state as BoletoData) || {};
+  const { beneficiario = "Beneficiário não identificado", cnpj = "CNPJ não identificado" } = boletoData;
+
+  // Se não houver boletoData.beneficiarioId ou boletoData.boletoId, não podemos criar o report
   const [formData, setFormData] = useState<FormData>({
     titulo: '',
     descricao: '',
     categoria: '',
-    beneficiarioid: 'uuid-do-beneficiario',
-    boletold: 'uuid-do-boleto',
-    usuarioid: 'uuid-do-usuario'
+    beneficiarioid: boletoData.beneficiarioId || '',
+    boletold: boletoData.boletoId || '',
+    usuarioid: user?.id || '' // Usar o ID do usuário logado
   });
 
   const [loading, setLoading] = useState<boolean>(false);
   const [message, setMessage] = useState<string>('');
+
+  const canSubmit = formData.beneficiarioid && formData.boletold && formData.usuarioid;
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>): void => {
     const { name, value } = e.target;
@@ -40,6 +59,11 @@ const ReportPage: React.FC = () => {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
+    if (!canSubmit) {
+      setMessage('Erro: Dados do boleto ou usuário incompletos. Não é possível enviar o report.');
+      return;
+    }
+
     setLoading(true);
     setMessage('');
 
@@ -55,7 +79,7 @@ const ReportPage: React.FC = () => {
       };
 
       await reportService.criarReport(reportRequest);
-      setMessage('Report criado com sucesso!');
+      setMessage('Denúncia enviada com sucesso! Agradecemos pela sua contribuição.');
 
       setFormData(prev => ({
         ...prev,
@@ -63,11 +87,16 @@ const ReportPage: React.FC = () => {
         descricao: '',
         categoria: ''
       }));
+
+      setTimeout(() => {
+        navigate('/scan');
+      }, 3000);
+
     } catch (error: any) {
       const errorMessage = error.response && error.response.data && error.response.data.message
         ? error.response.data.message
         : error.message;
-      setMessage('Erro ao criar report: ' + errorMessage);
+      setMessage('Erro ao enviar denúncia: ' + errorMessage);
     } finally {
       setLoading(false);
     }
@@ -94,20 +123,27 @@ const ReportPage: React.FC = () => {
           <div className="info-beneficiario">
             <div className="campo">
               <label htmlFor="beneficiario">Beneficiário</label>
-              <span>Empresa XYZ</span>
+              <span>{beneficiario}</span>
             </div>
             <div className="campo">
               <label htmlFor="cnpj">CNPJ</label>
-              <span>14860679000101</span>
+              <span>{cnpj}</span>
             </div>
           </div>
 
+          {!canSubmit && (
+            <div className="error-message">
+              Não foi possível carregar todos os dados necessários para o reporte. Volte à tela anterior e tente novamente.
+            </div>
+          )}
+
           <form onSubmit={handleSubmit}>
             <select
-              name="categoria"
-              value={formData.categoria}
+              name="titulo"
+              value={formData.titulo}
               onChange={handleInputChange}
               required
+              disabled={loading || !canSubmit}
             >
               <option value="" disabled>
                 Selecione o motivo do reporte
@@ -119,15 +155,6 @@ const ReportPage: React.FC = () => {
               ))}
             </select>
 
-            <input
-              type="text"
-              name="titulo"
-              placeholder="Título do report"
-              value={formData.titulo}
-              onChange={handleInputChange}
-              required
-            />
-
             <textarea
               name="descricao"
               placeholder="Descreva o motivo da sua denúncia..."
@@ -136,9 +163,10 @@ const ReportPage: React.FC = () => {
               cols={40}
               rows={6}
               required
+              disabled={loading || !canSubmit}
             />
 
-            <button type="submit" disabled={loading}>
+            <button type="submit" disabled={loading || !canSubmit}>
               {loading ? 'Enviando...' : 'Reportar Boleto'}
             </button>
           </form>

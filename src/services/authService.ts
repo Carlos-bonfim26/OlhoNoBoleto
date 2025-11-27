@@ -1,5 +1,5 @@
 import api from "./API";
-import type { CadastroRequest, LoginRequest, User, AuthResponse } from "../types";
+import type { CadastroRequest, LoginRequest, User, AuthResponse, UpdateProfileRequest } from "../types";
 
 export const authService = {
   async login(credentials: LoginRequest): Promise<AuthResponse> {
@@ -145,5 +145,35 @@ async getCurrentUser(): Promise<User> {
       }
       return false;
     }
-  }
+  },
+   async updateProfile(userId: string, userData: UpdateProfileRequest): Promise<User> {
+    try {
+      console.log('🔄 Atualizando perfil do usuário:', userId);
+      
+      const response = await api.put(`/auth/atualizar/${userId}`, userData);
+      
+      console.log('✅ Perfil atualizado com sucesso:', response.data);
+      
+      return response.data;
+      
+    } catch (error: any) {
+      console.error('❌ Erro ao atualizar perfil:', error);
+      
+      let errorMessage = "Erro ao atualizar perfil";
+      
+      if (error.response?.status === 401) {
+        errorMessage = "Usuário não autenticado";
+      } else if (error.response?.status === 403) {
+        errorMessage = "Sem permissão para atualizar este perfil";
+      } else if (error.response?.status === 404) {
+        errorMessage = "Usuário não encontrado";
+      } else if (error.response?.data) {
+        errorMessage = typeof error.response.data === 'string' 
+          ? error.response.data 
+          : error.response.data.message || "Erro ao atualizar perfil";
+      }
+
+      throw new Error(errorMessage);
+    }
+  },
 };

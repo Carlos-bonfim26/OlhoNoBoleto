@@ -8,9 +8,16 @@ interface AuthContextType {
   login: (credentials: LoginRequest) => Promise<void>;
   cadastro: (userData: CadastroRequest) => Promise<void>;
   logout: () => Promise<void>;
+  updateProfile: (userData: UpdateProfileRequest) => Promise<void>; // 🔥 NOVA FUNÇÃO
   loading: boolean;
   checkAuth: () => Promise<void>;
   error: string | null;
+}
+
+interface UpdateProfileRequest {
+  nome: string;
+  email: string;
+  senha?: string;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -45,6 +52,30 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     checkAuth();
   }, []);
 
+  // 🔥 NOVA FUNÇÃO: updateProfile
+  const updateProfile = async (userData: UpdateProfileRequest) => {
+    if (!user?.id) {
+      throw new Error('Usuário não autenticado');
+    }
+
+    setLoading(true);
+    setError(null);
+    
+    try {
+      // Chama o endpoint de atualização
+      const response = await authService.updateProfile(user.id, userData);
+      
+      // Atualiza o usuário no estado com os novos dados
+      setUser(response);
+      
+    } catch (error: any) {
+      setError(error.message);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const login = async (credentials: LoginRequest) => {
     setLoading(true);
     setError(null);
@@ -56,7 +87,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         throw new Error(result.message);
       }
       
-      // Atualizar usuário após login bem-sucedido
       await checkAuth();
       
     } catch (error: any) {
@@ -79,7 +109,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         throw new Error(result.message);
       }
       
-      // Fazer login automático após cadastro
       await login({ 
         email: userData.email, 
         senha: userData.senha 
@@ -101,7 +130,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       await authService.logout();
     } catch (error: any) {
       console.error('Aviso no logout:', error.message);
-      // Mesmo com erro, limpamos o estado local
     } finally {
       setUser(null);
       setLoading(false);
@@ -114,6 +142,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     login,
     cadastro,
     logout,
+    updateProfile, // 🔥 ADICIONADO AO CONTEXTO
     loading,
     checkAuth,
     error

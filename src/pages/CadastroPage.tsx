@@ -20,9 +20,8 @@ const CadastroPage: React.FC = () => {
     
     try {
       await cadastro({ nome, email, senha });
-      // O AuthContext já faz o login automático após o cadastro
-      // então podemos redirecionar para a página principal
-      navigate("/scan"); // ou "/" dependendo da sua rota principal
+  
+      navigate("/scan"); 
     } catch (error: any) {
       setError(error.message);
     } finally {
