@@ -27,14 +27,12 @@ const BoletoScanner: React.FC = () => {
             console.log(`Código lido: ${decodedText}`);
             
             try {
-                // Parar o scanner após a leitura
                 scanner.clear().catch(error => 
                     console.log('Scanner já estava limpo')
                 );
 
                 let linhaDigitavel = decodedText;
 
-                // Se veio como JSON, extrai apenas a linha digitável
                 if (decodedText.includes('linhaDigitavel')) {
                     try {
                         const jsonData = JSON.parse(decodedText);
@@ -45,23 +43,20 @@ const BoletoScanner: React.FC = () => {
                     }
                 }
 
-                // Remove caracteres especiais e espaços
                 linhaDigitavel = linhaDigitavel.replace(/[^\d]/g, '');
 
                 console.log('Linha digitável processada:', linhaDigitavel);
 
-                // Fazer a chamada para o backend
                 const request: BoletoValidateRequestDTO = {
                     linhaDigitavel: linhaDigitavel
                 };
 
                 const response = await api.post<BoletoResponseDTO>('/boleto/validate', request);
-                console.log('Resposta da API:', response.data); // Log para ver a resposta
+                console.log('Resposta da API:', response.data);
 
                 const boletoData = response.data;
 
-                // Navegar para InfoBoletoPage com os dados reais do backend
-                console.log('Navegando para /infoBoleto...'); // Log para ver se a navegação é chamada
+                console.log('Navegando para /infoBoleto...');
                 navigate('/infoBoleto', { 
                     state: { boleto: boletoData } 
                 });
@@ -70,19 +65,15 @@ const BoletoScanner: React.FC = () => {
                 console.error('Erro ao validar boleto:', error);
                 alert('Erro ao validar boleto. Tente novamente.');
                 
-                // Em caso de erro, recarrega a página para reiniciar o scanner
-                // Isso é drástico, mas evita problemas com o scanner
                 location.reload();
             }
         };
 
         const error = (err: string) => {
-            // Não logamos erros de leitura, pois são normais
         };
 
         scanner.render(success, error);
 
-        // Função de limpeza
         return () => {
             if (scannerRef.current) {
                 scannerRef.current.clear().catch(error => 

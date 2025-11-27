@@ -8,7 +8,7 @@ interface AuthContextType {
   login: (credentials: LoginRequest) => Promise<void>;
   cadastro: (userData: CadastroRequest) => Promise<void>;
   logout: () => Promise<void>;
-  updateProfile: (userData: UpdateProfileRequest) => Promise<void>; // 🔥 NOVA FUNÇÃO
+  updateProfile: (userData: UpdateProfileRequest) => Promise<void>; 
   loading: boolean;
   checkAuth: () => Promise<void>;
   error: string | null;
@@ -52,7 +52,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     checkAuth();
   }, []);
 
-  // 🔥 NOVA FUNÇÃO: updateProfile
   const updateProfile = async (userData: UpdateProfileRequest) => {
     if (!user?.id) {
       throw new Error('Usuário não autenticado');
@@ -62,10 +61,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setError(null);
     
     try {
-      // Chama o endpoint de atualização
       const response = await authService.updateProfile(user.id, userData);
       
-      // Atualiza o usuário no estado com os novos dados
       setUser(response);
       
     } catch (error: any) {
@@ -142,7 +139,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     login,
     cadastro,
     logout,
-    updateProfile, // 🔥 ADICIONADO AO CONTEXTO
+    updateProfile,
     loading,
     checkAuth,
     error

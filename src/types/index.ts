@@ -1,4 +1,3 @@
-// src/types/index.ts
 export interface LoginRequest {
   email: string;
   senha: string;
@@ -11,7 +10,7 @@ export interface CadastroRequest {
   role?: string;
 }
 
-export interface UpdateProfileRequest { // 🔥 NOVO TIPO
+export interface UpdateProfileRequest {
   nome: string;
   email: string;
   senha?: string;

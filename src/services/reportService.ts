@@ -1,4 +1,3 @@
-// src/services/reportService.ts
 import api from './API';
 import type { ReportRequest, ReportResponseDTO, DashboardData, ReportStatus } from '../types/report';
 

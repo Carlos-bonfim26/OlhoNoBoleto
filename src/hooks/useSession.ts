@@ -1,4 +1,3 @@
-// src/hooks/useSession.ts
 import { useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 

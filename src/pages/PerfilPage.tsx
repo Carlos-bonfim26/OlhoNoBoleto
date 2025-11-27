@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import './Main.css';
-import UserProfileImg from './img/user-profile.png'; // Você pode usar outra imagem apropriada
+import UserProfileImg from './img/user-profile.png'; 
 
 const PerfilPage: React.FC = () => {
   const { user, logout, updateProfile, loading } = useAuth();
@@ -18,7 +18,6 @@ const PerfilPage: React.FC = () => {
   const [message, setMessage] = useState('');
   const [updateLoading, setUpdateLoading] = useState(false);
 
-  // Preenche o formulário com os dados do usuário quando carregar
   useEffect(() => {
     if (user) {
       setFormData({
@@ -43,7 +42,6 @@ const PerfilPage: React.FC = () => {
     setUpdateLoading(true);
     setMessage('');
 
-    // Validação de senha
     if (formData.senha && formData.senha !== formData.confirmarSenha) {
       setMessage('As senhas não coincidem');
       setUpdateLoading(false);
@@ -54,13 +52,12 @@ const PerfilPage: React.FC = () => {
       await updateProfile({
         nome: formData.nome,
         email: formData.email,
-        senha: formData.senha || undefined // Só envia senha se foi alterada
+        senha: formData.senha || undefined 
       });
       
       setMessage('Perfil atualizado com sucesso!');
       setEditMode(false);
       
-      // Limpa os campos de senha após atualização bem-sucedida
       setFormData(prev => ({
         ...prev,
         senha: '',
@@ -218,7 +215,6 @@ const PerfilPage: React.FC = () => {
                     onClick={() => {
                       setEditMode(false);
                       setMessage('');
-                      // Reseta o formulário para os dados originais
                       setFormData({
                         nome: user.nome || '',
                         email: user.email || '',
@@ -254,7 +250,6 @@ const PerfilPage: React.FC = () => {
           </div>
         </section>
 
-       
       </main>
     </div>
   );

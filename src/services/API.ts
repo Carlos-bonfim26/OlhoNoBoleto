@@ -7,7 +7,6 @@ const api = axios.create({
   withCredentials: true,
 });
 
-// Interceptor de requisição
 api.interceptors.request.use(
   (config) => {
     console.log(`🌐 [${config.method?.toUpperCase()}] ${config.baseURL}${config.url}`);
