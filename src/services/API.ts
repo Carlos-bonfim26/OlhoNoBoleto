@@ -2,7 +2,8 @@ import axios from 'axios';
 
 
 const api = axios.create({
-  baseURL: 'https://tight-roxana-carlosbonfim26-bca61679.koyeb.app',
+  baseURL:'https://localhost:10000',
+  // baseURL: 'https://tight-roxana-carlosbonfim26-bca61679.koyeb.app',
   timeout: 30000,
   withCredentials: true,
 });
