@@ -9,7 +9,6 @@ export const useBoleto = () => {
         setResultado(null);
         
         try {
-            // Simulação de validação
             await new Promise(resolve => setTimeout(resolve, 2000));
             
             const resultadoMock = {

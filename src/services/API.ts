@@ -2,13 +2,12 @@ import axios from 'axios';
 
 
 const api = axios.create({
-  baseURL:'https://localhost:10000',
+  baseURL:'http://localhost:10000',
   // baseURL: 'https://tight-roxana-carlosbonfim26-bca61679.koyeb.app',
   timeout: 30000,
   withCredentials: true,
 });
 
-// Interceptor de requisição
 api.interceptors.request.use(
   (config) => {
     console.log(`🌐 [${config.method?.toUpperCase()}] ${config.baseURL}${config.url}`);

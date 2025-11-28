@@ -1,7 +1,6 @@
-// src/pages/ReportPage.tsx
 import React, { useState, type FormEvent, type ChangeEvent } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext'; // Importar useAuth
+import { useAuth } from '../contexts/AuthContext';
 import logotipo from "./img/OlhoNoBoletoVermelhoLogotipo.png";
 import ReportImg from "./img/reportarIMG.svg";
 import AreaDeUsuario from "../components/AreaDeUsuario";
@@ -29,19 +28,18 @@ interface FormData {
 const ReportPage: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { user } = useAuth(); // Obter o usuário logado
+  const { user } = useAuth(); 
 
   const boletoData = (location.state as BoletoData) || {};
   const { beneficiario = "Beneficiário não identificado", cnpj = "CNPJ não identificado" } = boletoData;
 
-  // Se não houver boletoData.beneficiarioId ou boletoData.boletoId, não podemos criar o report
   const [formData, setFormData] = useState<FormData>({
     titulo: '',
     descricao: '',
     categoria: '',
     beneficiarioid: boletoData.beneficiarioId || '',
     boletold: boletoData.boletoId || '',
-    usuarioid: user?.id || '' // Usar o ID do usuário logado
+    usuarioid: user?.id || ''
   });
 
   const [loading, setLoading] = useState<boolean>(false);

@@ -648,7 +648,6 @@ form > button {
   color: white;
 }
 
-/* Layout responsivo */
 @media (max-width: 768px) {
   .perfil-page main {
     flex-direction: column;

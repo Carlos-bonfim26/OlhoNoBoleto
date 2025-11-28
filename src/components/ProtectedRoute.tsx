@@ -19,7 +19,6 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   }
 
   if (!isAuthenticated) {
-    // Redireciona para login mantendo a página que tentou acessar
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
